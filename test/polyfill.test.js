@@ -116,6 +116,24 @@ describe('The ElementInternals polyfill', () => {
       expect(internals.checkValidity()).toBe(true);
     });
 
+    it('checkValidity will trigger an invalid event if the validity has been set to false', async () => {
+      const [tag] = createCustomElement(true);
+      const form = await fixture(`<form id="form">${renderTag(tag)}</form>`);
+      const element = form.querySelector(tag);
+      const { internals } = element;
+
+      internals.setValidity({
+        valueMissing: true
+      }, 'This field is required');
+
+      const spy = () => spy.called = true;
+      element.addEventListener('invalid', spy);
+
+      internals.checkValidity();
+
+      expect(spy.called).toBe(true);
+    });
+
     it('will set validtation message from call to setValidity if invalid', async () => {
       const [tag] = createCustomElement(true);
       const form = await fixture(`<form id="form">${renderTag(tag)}</form>`);

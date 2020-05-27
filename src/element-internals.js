@@ -33,12 +33,14 @@ class ElementInternals {
   checkValidity() {
     const validity = validityMap.get(this);
     const ref = refMap.get(this);
-    const validityEvent = new Event(validity.valid, {
-      bubbles: false,
-      cancelable: true,
-      composed: false
-    });
-    ref.dispatchEvent(validityEvent)
+    if (!validity.valid) {
+      const validityEvent = new Event('invalid', {
+        bubbles: false,
+        cancelable: true,
+        composed: false
+      });
+      ref.dispatchEvent(validityEvent)
+    }
     return validity.valid;
   }
 
